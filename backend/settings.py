@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'amazon_backend_api.apps.AmazonBackendApiConfig',
 ]
 
 MIDDLEWARE = [
