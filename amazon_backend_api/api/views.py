@@ -17,7 +17,7 @@ class RegisterAPIView(APIView):
         data = request.data
         serializer = AmazonuserSerializer(data=data)
         if serializer.is_valid():
-            Amazonuser.objects.create(
+            amz_user = Amazonuser.objects.create(
                 full_name = serializer.validated_data['full_name'],
                 email = serializer.validated_data['email'],
                 password = make_password(serializer.validated_data['password'])
@@ -25,6 +25,7 @@ class RegisterAPIView(APIView):
             response = {
                 'status' : status.HTTP_201_CREATED,
                 'message' : 'created',
+                'data' : get_tokens_for_user(Amazonuser.objects.get(email=amz_user.email))
             }
             return Response(response, status=status.HTTP_201_CREATED)
         response = {
@@ -66,7 +67,9 @@ class SigninAPIView(APIView):
 
 
 class UserAddressAPIView(APIView):
+
     permission_classes = [IsAuthenticated]
+
     def get(self,request):
         user = get_user_from_token(request)
         address = UserAddress.objects.filter(user=user)
