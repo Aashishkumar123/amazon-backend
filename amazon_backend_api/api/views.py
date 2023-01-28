@@ -1,11 +1,15 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from amazon_backend_api.api.serializers import AmazonuserSerializer
-from amazon_backend_api.models import Amazonuser
+from amazon_backend_api.api.serializers import AmazonuserSerializer, AmazonuserAddressSerializer
+from amazon_backend_api.models import Amazonuser, UserAddress
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
-from amazon_backend_api.api.helpers import get_tokens_for_user
+from amazon_backend_api.api.helpers import (
+    get_tokens_for_user,
+    get_user_from_token
+)
+from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterAPIView(APIView):
@@ -59,3 +63,17 @@ class SigninAPIView(APIView):
                 'data' : 'email or password is wrong'
             }
             return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserAddressAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self,request):
+        user = get_user_from_token(request)
+        address = UserAddress.objects.filter(user=user)
+        serialize_address = AmazonuserAddressSerializer(address,many=True)
+        response = {
+            "status" : status.HTTP_200_OK,
+            "message" : 'OK',
+            "data" : serialize_address.data
+        }
+        return Response(response,status=status.HTTP_200_OK)
