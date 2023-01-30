@@ -142,10 +142,11 @@ class UserAddressAPIView(APIView):
 
         serialize_address = AmazonuserAddressSerializer(adrs_id,data=data)
         if serialize_address.is_valid():
-            serialize_address.save()
+            updated_adrs = serialize_address.save()
             response = {
                 'status' : status.HTTP_200_OK,
-                'message' : 'updated'
+                'message' : 'address updated',
+                'data' : AmazonuserAddressSerializer(UserAddress.objects.get(id=updated_adrs.id)).data
             }
             return Response(response,status=status.HTTP_200_OK)
         response = {
@@ -191,12 +192,15 @@ This api will set a default address....
 '''
 class SetdefaultAddressAPIView(APIView):
 
+    permission_classes = [IsAuthenticated]
+
     def post(self,request,id):
         user = get_user_from_token(request)
-        UserAddress.objects.filter(user=user).update(default=False)
+        df_adrs =  UserAddress.objects.filter(user=user)
+        df_adrs.filter(default=True).update(default=False)
         
         try:
-            update_default_adrs = UserAddress.objects.get(id=id)
+            update_default_adrs = df_adrs.get(id=id)
             update_default_adrs.default = True
             update_default_adrs.save()
         except UserAddress.DoesNotExist:
