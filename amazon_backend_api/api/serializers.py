@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from amazon_backend_api.models import Amazonuser, UserAddress
+from rest_framework.serializers import ALL_FIELDS
 
 
 class AmazonuserSerializer(serializers.ModelSerializer):
@@ -18,20 +19,4 @@ class AmazonuserAddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserAddress
-        fields = [
-            'id',
-            'user',
-            'country',
-            'full_name',
-            'mobile_number',
-            'pincode',
-            'flat',
-            'street',
-            'landmark',
-            'town',
-            'state',
-            'default',
-            'address_type',
-            'created_at',
-            'updated_at'
-        ]
+        fields = ALL_FIELDS
