@@ -118,6 +118,7 @@ class UserAddressAPIView(APIView):
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
     def put(self,request):
+        user = get_user_from_token(request)
         if 'id' not in request.data:
             response = {
                 'status' : '400',
@@ -132,7 +133,8 @@ class UserAddressAPIView(APIView):
         data = request.data
 
         try:
-            adrs_id = UserAddress.objects.get(id=data['id'])
+            user_address = UserAddress.objects.filter(user=user)
+            adrs_id = user_address.get(id=data['id'])
         except UserAddress.DoesNotExist:
             response = {
             'status' : status.HTTP_400_BAD_REQUEST,
@@ -157,6 +159,7 @@ class UserAddressAPIView(APIView):
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self,request):
+        user = get_user_from_token(request)
         if 'id' not in request.data or not request.data['id']:
             response = {
             'status' : status.HTTP_400_BAD_REQUEST,
@@ -172,7 +175,7 @@ class UserAddressAPIView(APIView):
         address_id = request.data['id']
 
         try:
-            UserAddress.objects.get(id=address_id).delete()
+            UserAddress.objects.filter(user=user).get(id=address_id).delete()
         except UserAddress.DoesNotExist:
             response = {
             'status' : status.HTTP_400_BAD_REQUEST,
