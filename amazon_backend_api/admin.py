@@ -7,7 +7,8 @@ from amazon_backend_api.models import (
     Subcategory,
     Size,
     Product,
-    ProductDetail
+    ProductDetail,
+    Color
 )
 
 admin.site.register(Amazonuser)
@@ -18,3 +19,4 @@ admin.site.register(Subcategory)
 admin.site.register(Size)
 admin.site.register(Product)
 admin.site.register(ProductDetail)
+admin.site.register(Color)

@@ -82,6 +82,14 @@ class Size(BaseModel):
         return str(f'{self.name}')
 
 
+class Color(BaseModel):
+    name = models.CharField(verbose_name='Color Name', max_length=100)
+    code = models.CharField(verbose_name='Color Code', max_length=100)
+
+    def __str__(self):
+        return str(f'{self.name}')
+
+
 class Product(BaseModel):
     name = models.CharField(verbose_name='Product Name', max_length=200)
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, related_name='Brand_Name', null=True)
