@@ -80,3 +80,15 @@ class Size(BaseModel):
 
     def __str__(self):
         return str(f'{self.name}')
+
+
+class Product(BaseModel):
+    name = models.CharField(verbose_name='Product Name', max_length=200)
+    brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, related_name='Brand_Name', null=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, related_name='Category', null=True)
+    subcategory1 = models.ForeignKey(Subcategory, on_delete=models.SET_NULL, related_name='SubCategory1', null=True)
+    subcategory2 = models.ForeignKey(Subcategory, on_delete=models.SET_NULL, related_name='SubCategory2', null=True)
+
+    def __str__(self) -> str:
+        return str(f'{self.name}')
+
