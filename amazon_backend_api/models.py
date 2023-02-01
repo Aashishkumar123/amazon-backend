@@ -73,3 +73,10 @@ class Subcategory(BaseModel):
 
     def __str__(self):
         return str(f'{self.name}')
+
+
+class Size(BaseModel):
+    name = models.CharField(verbose_name='Size', max_length=100)
+
+    def __str__(self):
+        return str(f'{self.name}')

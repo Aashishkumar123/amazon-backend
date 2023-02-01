@@ -4,7 +4,8 @@ from amazon_backend_api.models import (
     UserAddress,
     Brand,
     Category,
-    Subcategory
+    Subcategory,
+    Size
 )
 
 admin.site.register(Amazonuser)
@@ -12,3 +13,4 @@ admin.site.register(UserAddress)
 admin.site.register(Brand)
 admin.site.register(Category)
 admin.site.register(Subcategory)
+admin.site.register(Size)
