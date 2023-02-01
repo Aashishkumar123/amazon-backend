@@ -2,11 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from amazon_backend_api.api.serializers import (
     AmazonuserSerializer,
-    AmazonuserAddressSerializer
+    AmazonuserAddressSerializer,
+    BrandSerializer
 )
 from amazon_backend_api.models import (
     Amazonuser,
-    UserAddress
+    UserAddress,
+    Brand
 )
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
@@ -216,5 +218,23 @@ class SetdefaultAddressAPIView(APIView):
         response = {
             'status' : status.HTTP_200_OK,
             'message' : 'success'
+        }
+        return Response(response,status=status.HTTP_200_OK)
+
+
+'''
+This api will GET all the brands
+'''
+class BrandAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        brands = Brand.objects.all()
+        brand_serializer = BrandSerializer(brands, many=True)
+        response = {
+            'status' : status.HTTP_200_OK,
+            'message' : 'success',
+            'data' : brand_serializer.data
         }
         return Response(response,status=status.HTTP_200_OK)

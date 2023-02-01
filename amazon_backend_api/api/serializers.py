@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from amazon_backend_api.models import Amazonuser, UserAddress
+from amazon_backend_api.models import Amazonuser, UserAddress, Brand
 from rest_framework.serializers import ALL_FIELDS
 
 
@@ -19,4 +19,11 @@ class AmazonuserAddressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserAddress
+        fields = ALL_FIELDS
+
+
+class BrandSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Brand
         fields = ALL_FIELDS
