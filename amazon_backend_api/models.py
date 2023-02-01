@@ -59,3 +59,10 @@ class Brand(BaseModel):
 
     def __str__(self):
         return str(f'{self.name}')
+
+
+class Category(BaseModel):
+    name = models.CharField(verbose_name='Category Name', max_length=100)
+
+    def __str__(self):
+        return str(f'{self.name}')

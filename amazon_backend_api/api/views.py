@@ -17,7 +17,7 @@ from amazon_backend_api.api.helpers import (
     get_tokens_for_user,
     get_user_from_token
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 
 '''
@@ -238,3 +238,21 @@ class BrandAPIView(APIView):
             'data' : brand_serializer.data
         }
         return Response(response,status=status.HTTP_200_OK)
+
+    def post(self,request):
+        data = request.data
+        brand_serializer = BrandSerializer(data=data)
+        if brand_serializer.is_valid():
+            brand = brand_serializer.save()
+            response = {
+            'status' : status.HTTP_201_CREATED,
+            'message' : 'brand created',
+            'data' : BrandSerializer(Brand.objects.get(id=brand.id)).data
+            }
+            return Response(response,status=status.HTTP_201_CREATED)
+        response = {
+            'status' : status.HTTP_400_BAD_REQUEST,
+            'message' : 'bad request',
+            'data' : brand_serializer.errors
+            }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
