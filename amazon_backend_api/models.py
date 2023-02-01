@@ -51,3 +51,11 @@ class UserAddress(BaseModel):
 
     def __str__(self):
         return str(f'{self.full_name} Address')
+
+
+class Brand(BaseModel):
+    name = models.CharField(verbose_name='Brand Name', max_length=100)
+    logo = models.ImageField(upload_to='brands/logo')
+
+    def __str__(self):
+        return str(f'{self.name}')
