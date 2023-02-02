@@ -57,10 +57,10 @@ class SizeSerializer(serializers.ModelSerializer):
 
 class ProductDetailsSerializer(serializers.ModelSerializer):
 
-    product = serializers.CharField(source="product.name", read_only=True)
+    product = ProductSerializer(read_only=True)
     size = SizeSerializer(read_only=True, many=True)
     color = serializers.CharField(source="color.code", read_only=True)
 
     class Meta:
         model = ProductDetail
-        fields = ['product','size','color','description','mrp','discount','stocks','image1','image2','image3']
+        fields = ['id','product','size','color','description','mrp','discount','stocks','image1','image2','image3']

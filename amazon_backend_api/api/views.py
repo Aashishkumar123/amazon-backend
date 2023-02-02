@@ -4,7 +4,6 @@ from amazon_backend_api.api.serializers import (
     AmazonuserSerializer,
     AmazonuserAddressSerializer,
     BrandSerializer,
-    ProductSerializer,
     ProductDetailsSerializer
 )
 from amazon_backend_api.models import (
@@ -185,9 +184,9 @@ class UserAddressAPIView(APIView):
             UserAddress.objects.filter(user=user).get(id=address_id).delete()
         except UserAddress.DoesNotExist:
             response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'Id does not exist.'
-        }
+                'status' : status.HTTP_400_BAD_REQUEST,
+                'message' : 'Id does not exist.'
+            }
             return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
         response = {
@@ -228,7 +227,7 @@ class SetdefaultAddressAPIView(APIView):
 
 
 '''
-This api will GET all the brands
+This api will GET and Save the new brands
 '''
 class BrandAPIView(APIView):
 
@@ -263,30 +262,64 @@ class BrandAPIView(APIView):
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProductsMenAPIView(APIView):
+'''
+This api return all the products on the base of its subcategory
+'''
+class ProductsAPIView(APIView):
 
     def get(self,request,subcategory1,subcategory2=None):
         if subcategory2:
-             men_products = Product.objects.filter(
+             products = Product.objects.filter(
                     subcategory1=Subcategory.objects.filter(name__iexact=subcategory1).first(),
                     subcategory2=Subcategory.objects.filter(name__iexact=subcategory2).first()
                     ).first()
         else:
-            men_products = Product.objects.filter(
+            products = Product.objects.filter(
                     subcategory1=Subcategory.objects.filter(name__iexact=subcategory1).first()
                     ).first()
-        men_products_serializer = ProductSerializer(men_products)
-        all_men_products = ProductDetail.objects.filter(product=men_products)
-        all_men_products_serializer = ProductDetailsSerializer(all_men_products,many=True)
+
+        allproducts = ProductDetail.objects.filter(product=products)
+        allproducts_serializer = ProductDetailsSerializer(allproducts,many=True)
+
         response = {
             'status' : status.HTTP_200_OK,
             'message' : 'success',
-            'data' : all_men_products_serializer.data
+            'data' : allproducts_serializer.data
             }
-        for _ in range(len(response['data'])):
-            response['data'][_]['id'] = men_products_serializer.data['id']
-            response['data'][_]['brand'] = men_products_serializer.data['brand']
-            response['data'][_]['category'] = men_products_serializer.data['category']
-            response['data'][_]['subcategory1'] = men_products_serializer.data['subcategory1']
-            response['data'][_]['subcategory2'] = men_products_serializer.data['subcategory2']
+        return Response(response,status=status.HTTP_200_OK)
+
+
+'''
+This api return single product details
+'''
+class ProductDetailsAPIView(APIView):
+
+    def get(self,request,product_id,product_detail_id):
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            response = {
+                'status' : status.HTTP_400_BAD_REQUEST,
+                'message' : 'product not found.'
+            }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        
+        product_details = ProductDetail.objects.filter(product=product)
+
+        if not product_details.filter(id=product_detail_id):
+            response = {
+                'status' : status.HTTP_400_BAD_REQUEST,
+                'message' : 'product not found.',
+                'data' : []
+            }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+        product_details_serializer = ProductDetailsSerializer(product_details,many=True)
+
+        response = {
+            'status' : status.HTTP_200_OK,
+            'message' : 'success',
+            'active_product_detail_id' : product_detail_id,
+            'data' : product_details_serializer.data
+            }
         return Response(response,status=status.HTTP_200_OK)
