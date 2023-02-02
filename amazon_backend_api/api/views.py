@@ -330,7 +330,10 @@ class ProductDetailsAPIView(APIView):
 class CartAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
-    
+
+    '''
+    Return all the products from cart for particular user
+    '''
     def get(self,request):
         user = get_user_from_token(request)
         cart = Cart.objects.filter(user=user)
@@ -341,3 +344,73 @@ class CartAPIView(APIView):
             'data' : cart_serializer.data
         }
         return Response(response,status=status.HTTP_200_OK)
+    
+    '''
+    Add the product to cart for a particular user
+    '''
+    def post(self,request):
+        user = get_user_from_token(request)
+        data = request.data
+        
+        '''
+        This will response 404 if product_id not in request data
+        '''
+        if 'product_id' not in data:
+            response = {
+                    'status' : status.HTTP_400_BAD_REQUEST,
+                    'message' : 'bad request',
+                    'data' : {
+                        'product_id' : 'Product id should not empty'
+                    }
+                }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+        '''
+        This will response 404 status code if get wrong product id
+        '''
+        try:
+            product_id = ProductDetail.objects.get(id=request.data['product_id'])
+        except ProductDetail.DoesNotExist:
+            response = {
+                'status' : status.HTTP_400_BAD_REQUEST,
+                'message' : 'bad request',
+                'data' : {
+                    'product_id' : 'Invalid product id'
+                }
+            }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        
+        '''
+        This will check product already in cart then will response 404 status code
+        '''
+        if Cart.objects.filter(user=user,product=data['product_id']).exists():
+                response = {
+                    'status' : status.HTTP_400_BAD_REQUEST,
+                    'message' : 'bad request',
+                    'data' : {
+                        'product' : 'Product already in cart'
+                    }
+                }
+                return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+        '''
+        If everything fine this will add product to cart
+        '''
+        cart_serializer = CartSerializer(data=data)
+        if cart_serializer.is_valid():
+            cart_serializer.save(user=user,product=product_id)
+            response = {
+                'status' : status.HTTP_201_CREATED,
+                'message' : 'proudct added to cart'
+            }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+        '''
+        else return 404 status code
+        '''
+        response = {
+                'status' : status.HTTP_400_BAD_REQUEST,
+                'message' : 'bad request',
+                'data' : cart_serializer.errors
+            }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
