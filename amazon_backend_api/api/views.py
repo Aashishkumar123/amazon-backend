@@ -327,6 +327,12 @@ class ProductDetailsAPIView(APIView):
         return Response(response,status=status.HTTP_200_OK)
 
 
+'''
+cart api that will get all the products of an user
+cart api that will add product to the cart of an user
+cart api that will update the product quantity of an user
+cart api that will remove the product from cart of an user
+'''
 class CartAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -413,4 +419,46 @@ class CartAPIView(APIView):
                 'message' : 'bad request',
                 'data' : cart_serializer.errors
             }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+    '''
+    This will remove product from cart of a particular user 
+    '''
+    def delete(self,request):
+        data = request.data
+        user = get_user_from_token(request)
+        '''
+        This will response 404 if product_id not in request data
+        '''
+        if 'product_id' not in data:
+            response = {
+                    'status' : status.HTTP_400_BAD_REQUEST,
+                    'message' : 'bad request',
+                    'data' : {
+                        'product_id' : 'Product id should not empty'
+                    }
+                }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+        '''
+        This will check product avaliable in cart to delete
+        '''
+        if Cart.objects.filter(user=user,product=data['product_id']).exists():
+            Cart.objects.get(product=data['product_id']).delete()
+            response = {
+                    'status' : status.HTTP_204_NO_CONTENT,
+                    'message' : 'product remove from cart',
+                }
+            return Response(response,status=status.HTTP_204_NO_CONTENT)
+        
+        '''
+        other response inavlid product id
+        '''
+        response = {
+                    'status' : status.HTTP_400_BAD_REQUEST,
+                    'message' : 'bad request',
+                    'data' : {
+                        'product_id' : 'Invalid product id'
+                    }
+                }
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
