@@ -3,12 +3,17 @@ from rest_framework.response import Response
 from amazon_backend_api.api.serializers import (
     AmazonuserSerializer,
     AmazonuserAddressSerializer,
-    BrandSerializer
+    BrandSerializer,
+    ProductSerializer,
+    ProductDetailsSerializer
 )
 from amazon_backend_api.models import (
     Amazonuser,
     UserAddress,
-    Brand
+    Brand,
+    Product,
+    ProductDetail,
+    Subcategory
 )
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
@@ -17,7 +22,7 @@ from amazon_backend_api.api.helpers import (
     get_tokens_for_user,
     get_user_from_token
 )
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 
 
 '''
@@ -256,3 +261,32 @@ class BrandAPIView(APIView):
             'data' : brand_serializer.errors
             }
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProductsMenAPIView(APIView):
+
+    def get(self,request,subcategory1,subcategory2=None):
+        if subcategory2:
+             men_products = Product.objects.filter(
+                    subcategory1=Subcategory.objects.filter(name__iexact=subcategory1).first(),
+                    subcategory2=Subcategory.objects.filter(name__iexact=subcategory2).first()
+                    ).first()
+        else:
+            men_products = Product.objects.filter(
+                    subcategory1=Subcategory.objects.filter(name__iexact=subcategory1).first()
+                    ).first()
+        men_products_serializer = ProductSerializer(men_products)
+        all_men_products = ProductDetail.objects.filter(product=men_products)
+        all_men_products_serializer = ProductDetailsSerializer(all_men_products,many=True)
+        response = {
+            'status' : status.HTTP_200_OK,
+            'message' : 'success',
+            'data' : all_men_products_serializer.data
+            }
+        for _ in range(len(response['data'])):
+            response['data'][_]['id'] = men_products_serializer.data['id']
+            response['data'][_]['brand'] = men_products_serializer.data['brand']
+            response['data'][_]['category'] = men_products_serializer.data['category']
+            response['data'][_]['subcategory1'] = men_products_serializer.data['subcategory1']
+            response['data'][_]['subcategory2'] = men_products_serializer.data['subcategory2']
+        return Response(response,status=status.HTTP_200_OK)

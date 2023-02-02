@@ -104,9 +104,12 @@ class Product(BaseModel):
 class ProductDetail(BaseModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product')
     size = models.ManyToManyField(Size, related_name='size')
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, related_name='Color')
     description = models.TextField(verbose_name='Product Descriptions', max_length=1000)
     mrp = models.DecimalField(verbose_name='MRP', decimal_places=2, max_digits=10)
     discount = models.DecimalField(verbose_name='Discount', decimal_places=2, max_digits=10)
+    stocks =models.IntegerField(verbose_name='Number of Stocks')
+    is_stock = models.BooleanField(verbose_name='Stocks Avaliable', default=True)
     image1 = models.ImageField(upload_to='products',verbose_name='Image 1')
     image2 = models.ImageField(upload_to='products',verbose_name='Image 2')
     image3 = models.ImageField(upload_to='products',verbose_name='Image 3')

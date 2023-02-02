@@ -7,5 +7,7 @@ urlpatterns = [
     path('user/sign-in/',views.SigninAPIView.as_view(), name="amz-user-sign-in"),
     path('user/address/',views.UserAddressAPIView.as_view(),name='amz-user-address'),
     path('user/address/set/default/<int:id>/',views.SetdefaultAddressAPIView.as_view(),name='amz-user-address-set-default'),
-    path('brands/',views.BrandAPIView.as_view(),name="amz-brands")
+    path('brands/',views.BrandAPIView.as_view(),name="amz-brands"),
+    path('products/fashion/<str:subcategory1>/',views.ProductsMenAPIView.as_view(),name="amz-products-subcategory1"),
+    path('products/fashion/<str:subcategory1>/<str:subcategory2>/',views.ProductsMenAPIView.as_view(),name="amz-products-subcategory2"),
 ]
