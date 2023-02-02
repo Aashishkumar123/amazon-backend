@@ -422,6 +422,66 @@ class CartAPIView(APIView):
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
     '''
+    This will update the product quantity of a particular user
+    '''
+    def patch(self,request):
+        data = request.data
+        user = get_user_from_token(request)
+        
+        '''
+        This will check request data is having id or not
+        '''
+        if 'id' not in data:
+            response = {
+                'status' : status.HTTP_400_BAD_REQUEST,
+                'message' : 'bad request',
+                'data' : {
+                    'id' : [
+                        'id is required'
+                    ]
+                }
+            }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+        '''
+        This will check the cart id is belong the authenticated user
+        '''
+        if not Cart.objects.filter(user=user,id=data['id']).exists():
+            response = {
+                'status' : status.HTTP_400_BAD_REQUEST,
+                'message' : 'bad request',
+                'data' : {
+                    'id' : [
+                        'invalid cart id'
+                    ]
+                }
+            }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+        '''
+        This will check the validation and update the product quantity
+        '''
+        cart_serializer = CartSerializer(instance=Cart.objects.get(id=data['id']),data=data,partial=True)
+        if cart_serializer.is_valid():
+            cart_serializer.save()
+            response = {
+                'status' : status.HTTP_202_ACCEPTED,
+                'message' : 'quantity updated',
+                'data' : CartSerializer(Cart.objects.get(id=cart_serializer.data['id'])).data
+            }
+            return Response(response,status=status.HTTP_202_ACCEPTED)
+        
+        '''
+        otherwise it raise the validation
+        '''
+        response = {
+                'status' : status.HTTP_400_BAD_REQUEST,
+                'message' : 'bad request',
+                'data' : cart_serializer.errors
+            }
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+    
+    '''
     This will remove product from cart of a particular user 
     '''
     def delete(self,request):
