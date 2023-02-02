@@ -116,3 +116,12 @@ class ProductDetail(BaseModel):
 
     def __str__(self) -> str:
         return str(f'{self.product} Details')
+
+
+class Cart(BaseModel):
+    user = models.ForeignKey(Amazonuser, on_delete=models.CASCADE, related_name='AmazonUser')
+    product = models.ForeignKey(ProductDetail, on_delete=models.CASCADE, related_name='Product')
+    quantity = models.IntegerField(verbose_name='Quantity', default=1)
+
+    def __str__(self):
+        return str(f'{self.product}')
