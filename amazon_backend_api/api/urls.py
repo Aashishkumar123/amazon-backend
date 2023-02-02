@@ -11,4 +11,5 @@ urlpatterns = [
     path('products/fashion/<str:subcategory1>/',views.ProductsAPIView.as_view(),name="amz-products-subcategory1"),
     path('products/fashion/<str:subcategory1>/<str:subcategory2>/',views.ProductsAPIView.as_view(),name="amz-products-subcategory2"),
     path('product/product-id/<int:product_id>/product-detail/<int:product_detail_id>/',views.ProductDetailsAPIView.as_view(),name="amz-product-details"),
+    path('cart/',views.CartAPIView.as_view(),name="amz-cart"),
 ]

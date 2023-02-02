@@ -5,7 +5,8 @@ from amazon_backend_api.models import (
     Brand,
     Product,
     ProductDetail,
-    Size
+    Size,
+    Cart
 )
 from rest_framework.serializers import ALL_FIELDS
 
@@ -76,3 +77,13 @@ class ProductDetailsSerializer(serializers.ModelSerializer):
             'image2',
             'image3'
         ]
+
+
+class CartSerializer(serializers.ModelSerializer):
+    
+    user = serializers.CharField(source="user.email", read_only=True)
+    product = ProductDetailsSerializer(read_only=True)
+
+    class Meta:
+        model = Cart
+        fields = ['user','product','quantity']

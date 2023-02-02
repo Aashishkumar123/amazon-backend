@@ -4,7 +4,8 @@ from amazon_backend_api.api.serializers import (
     AmazonuserSerializer,
     AmazonuserAddressSerializer,
     BrandSerializer,
-    ProductDetailsSerializer
+    ProductDetailsSerializer,
+    CartSerializer
 )
 from amazon_backend_api.models import (
     Amazonuser,
@@ -12,7 +13,8 @@ from amazon_backend_api.models import (
     Brand,
     Product,
     ProductDetail,
-    Subcategory
+    Subcategory,
+    Cart
 )
 from rest_framework import status
 from django.contrib.auth.hashers import make_password
@@ -322,4 +324,20 @@ class ProductDetailsAPIView(APIView):
             'active_product_detail_id' : product_detail_id,
             'data' : product_details_serializer.data
             }
+        return Response(response,status=status.HTTP_200_OK)
+
+
+class CartAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+    
+    def get(self,request):
+        user = get_user_from_token(request)
+        cart = Cart.objects.filter(user=user)
+        cart_serializer = CartSerializer(cart,many=True)
+        response = {
+            'status' : status.HTTP_200_OK,
+            'message' : 'success',
+            'data' : cart_serializer.data
+        }
         return Response(response,status=status.HTTP_200_OK)
