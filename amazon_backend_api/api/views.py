@@ -21,7 +21,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
 from amazon_backend_api.api.helpers import (
     get_tokens_for_user,
-    get_user_from_token
+    get_user_from_token,
+    get_access_token_from_refresh_token
 )
 from rest_framework.permissions import IsAuthenticated
 
@@ -86,6 +87,59 @@ class SigninAPIView(APIView):
                 'data' : 'email or password is wrong'
             }
             return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+
+class RegenerateAccessToken(APIView):
+
+    def post(self,request):
+        data = request.data
+        if 'refresh_token' not in data and 'grant_type' not in data:
+            response = {
+            'status' : status.HTTP_400_BAD_REQUEST,
+            'message' : 'bad request',
+            'data' : {
+                'refresh_token' : [
+                    'refresh_token is required'
+                ],
+                'grant_type' : [
+                    'grant_type is required'
+                ]
+            }
+        }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        
+        if 'refresh_token' not in data:
+            response = {
+            'status' : status.HTTP_400_BAD_REQUEST,
+            'message' : 'bad request',
+            'data' : {
+                'refresh_token' : [
+                    'refresh_token is required'
+                ]
+            }
+        }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        
+        if 'grant_type' not in data:
+            response = {
+            'status' : status.HTTP_400_BAD_REQUEST,
+            'message' : 'bad request',
+            'data' : {
+                'grant_type' : [
+                    'grant_type is required'
+                ]
+            }
+        }
+            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+
+        data = get_access_token_from_refresh_token(request)
+        
+        response = {
+            'status' : status.HTTP_200_OK,
+            'message' : 'success',
+            'data' : data if data else []
+            }
+        return Response(response,status=status.HTTP_200_OK)
 
 
 '''
