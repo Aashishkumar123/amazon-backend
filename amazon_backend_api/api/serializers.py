@@ -101,3 +101,9 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ['id','user','product','quantity']
+
+
+class RegenerateAccessTokenSerializer(serializers.Serializer):
+
+    grant_type = serializers.CharField(error_messages={'required':'grant type may not be blank'})
+    refresh_token = serializers.CharField(error_messages={'required':'refresh token may not be blank'})

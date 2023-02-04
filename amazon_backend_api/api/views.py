@@ -6,7 +6,8 @@ from amazon_backend_api.api.serializers import (
     BrandSerializer,
     ProductDetailsSerializer,
     CartSerializer,
-    AmazonuserLoginSerializer
+    AmazonuserLoginSerializer,
+    RegenerateAccessTokenSerializer
 )
 from amazon_backend_api.models import (
     Amazonuser,
@@ -28,9 +29,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterAPIView(APIView):
-    """
-    This api used for registeration...
-    """
+    """This api used for register new user"""
 
     def post(self,request):
         """Handle post request"""
@@ -117,56 +116,32 @@ class SigninAPIView(APIView):
 
 
 class RegenerateAccessToken(APIView):
+    """This api is used to regenerate access token"""
 
     def post(self,request):
-        data = request.data
-        if 'refresh_token' not in data and 'grant_type' not in data:
-            response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'bad request',
-            'data' : {
-                'refresh_token' : [
-                    'refresh_token is required'
-                ],
-                'grant_type' : [
-                    'grant_type is required'
-                ]
-            }
-        }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
-        
-        if 'refresh_token' not in data:
-            response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'bad request',
-            'data' : {
-                'refresh_token' : [
-                    'refresh_token is required'
-                ]
-            }
-        }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
-        
-        if 'grant_type' not in data:
-            response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'bad request',
-            'data' : {
-                'grant_type' : [
-                    'grant_type is required'
-                ]
-            }
-        }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        """Handle post request"""
 
-        data = get_access_token_from_refresh_token(request)
-        
+        reg_access_token_serializer = RegenerateAccessTokenSerializer(data=request.data)
+
+        """it will check data validation"""
+        if reg_access_token_serializer.is_valid():
+
+            """return access token"""
+            data = get_access_token_from_refresh_token(request)
+            response = {
+                'status' : status.HTTP_200_OK,
+                'message' : 'success',
+                'data' : data if data else []
+                }
+            return Response(response,status=status.HTTP_200_OK)
+            
+        """if validation failed it return this"""
         response = {
-            'status' : status.HTTP_200_OK,
-            'message' : 'success',
-            'data' : data if data else []
+            'status' : status.HTTP_400_BAD_REQUEST,
+            'message' : 'bad request',
+            'data' : reg_access_token_serializer.errors
             }
-        return Response(response,status=status.HTTP_200_OK)
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
 
 '''
