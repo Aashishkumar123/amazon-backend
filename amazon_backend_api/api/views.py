@@ -18,7 +18,6 @@ from amazon_backend_api.models import (
     Cart
 )
 from rest_framework import status
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
 from amazon_backend_api.api.helpers import (
     get_tokens_for_user,
@@ -28,26 +27,36 @@ from amazon_backend_api.api.helpers import (
 from rest_framework.permissions import IsAuthenticated
 
 
-'''
-This api used for registeration...
-'''
 class RegisterAPIView(APIView):
+    """
+    This api used for registeration...
+    """
 
     def post(self,request):
-        data = request.data
-        serializer = AmazonuserSerializer(data=data)
+        """Handle post request"""
+
+        serializer = AmazonuserSerializer(data=request.data)
+
+        """it will check data validation"""
         if serializer.is_valid():
-            amz_user = Amazonuser.objects.create(
-                full_name = serializer.validated_data['full_name'],
-                email = serializer.validated_data['email'],
-                password = make_password(serializer.validated_data['password'])
-            )
+
+            """create a new user"""
+            amz_user = serializer.save()
+
+            """return the user information and tokens"""
+            res_data = get_tokens_for_user(
+                Amazonuser.objects.get(email=amz_user.email)
+                )
+
+            """response result"""
             response = {
                 'status' : status.HTTP_201_CREATED,
                 'message' : 'created',
-                'data' : get_tokens_for_user(Amazonuser.objects.get(email=amz_user.email))
+                'data' : res_data
             }
             return Response(response, status=status.HTTP_201_CREATED)
+
+        """if validation failed it return this"""
         response = {
             'status' : status.HTTP_400_BAD_REQUEST,
             'message' : 'bad request',
@@ -72,7 +81,10 @@ class SigninAPIView(APIView):
             password = login_serializer.validated_data['password']
 
             """it will check the credentials is valid or not"""
-            user = authenticate(request,email=email,password=password)
+            user = authenticate(
+                    request,
+                    email = email,
+                    password = password)
 
             """it will return access token if credentials are ok"""
             if user is not None:

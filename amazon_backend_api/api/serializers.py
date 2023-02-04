@@ -9,6 +9,7 @@ from amazon_backend_api.models import (
     Cart
 )
 from rest_framework.serializers import ALL_FIELDS
+from django.contrib.auth.hashers import make_password
 
 
 class AmazonuserSerializer(serializers.ModelSerializer):
@@ -16,6 +17,10 @@ class AmazonuserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Amazonuser
         fields = ['email','full_name','password']
+    
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data.get('password'))
+        return super(AmazonuserSerializer, self).create(validated_data)
 
 
 class AmazonuserLoginSerializer(serializers.ModelSerializer):
