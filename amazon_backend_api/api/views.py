@@ -5,7 +5,8 @@ from amazon_backend_api.api.serializers import (
     AmazonuserAddressSerializer,
     BrandSerializer,
     ProductDetailsSerializer,
-    CartSerializer
+    CartSerializer,
+    AmazonuserLoginSerializer
 )
 from amazon_backend_api.models import (
     Amazonuser,
@@ -55,38 +56,52 @@ class RegisterAPIView(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST) 
 
 
-'''
-This api is used for sign in.....
-'''
 class SigninAPIView(APIView):
+    """""This api is handling login"""""
 
     def post(self,request):
-        if 'email' not in request.data or 'password' not in request.data:
-            response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : 'email or password should not empty'
-            }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        """Handle post request"""
 
-        email = request.data['email']
-        password = request.data['password']
+        login_serializer = AmazonuserLoginSerializer(data=request.data)
 
-        user = authenticate(request,email=email,password=password)
-        if user is not None:
-            response = {
-                'status' : status.HTTP_200_OK,
-                'message' : 'success',
-                'data' : get_tokens_for_user(Amazonuser.objects.get(email=email))
+        """it will check data validation"""
+        if login_serializer.is_valid():
+
+            """get email and password"""
+            email = login_serializer.validated_data['email']
+            password = login_serializer.validated_data['password']
+
+            """it will check the credentials is valid or not"""
+            user = authenticate(request,email=email,password=password)
+
+            """it will return access token if credentials are ok"""
+            if user is not None:
+                
+                """return the user information and tokens"""
+                res_data = get_tokens_for_user(
+                    Amazonuser.objects.get(email=email)
+                    )
+                response = {
+                    'status' : status.HTTP_200_OK,
+                    'message' : 'success',
+                    'data' : res_data
+                }
+                return Response(response,status=status.HTTP_200_OK)
+            else:
+                """otherwise return this response"""
+                response = {
+                    'status' : status.HTTP_401_UNAUTHORIZED,
+                    'message' : 'Invalid Email or Password'
+                }
+                return Response(response,status=status.HTTP_401_UNAUTHORIZED)
+
+        """if validation failed it return this"""
+        response = {
+            'status' : status.HTTP_400_BAD_REQUEST,
+            'message' : 'bad request',
+            'data' : login_serializer.errors
             }
-            return Response(response,status=status.HTTP_200_OK)
-        else:
-            response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : 'email or password is wrong'
-            }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegenerateAccessToken(APIView):
