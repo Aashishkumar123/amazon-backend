@@ -1,0 +1,525 @@
+{
+	"info": {
+		"_postman_id": "e52519e2-f852-456a-a417-3b6d77ad0d15",
+		"name": "AMAZON API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Amz Auth",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\" : \"xyz\",\n    \"email\" : \"xyz@gmail.com\",\n    \"password\" : \"xyz123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}user/register/",
+							"host": [
+								"{{BASEURL}}user"
+							],
+							"path": [
+								"register",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" : \"xyz@gmail.com\",\n    \"password\" : \"xyz123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}user/sign-in/",
+							"host": [
+								"{{BASEURL}}user"
+							],
+							"path": [
+								"sign-in",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Access token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"grant_type\" : \"refresh_token\",\n    \"refresh_token\" : \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNzA1MTU3MiwiaWF0IjoxNjc1NTE1NTcyLCJqdGkiOiI1ZmNlNGQ0MDU4ODg0Mzc2OWRkYjY2ZTIzZTJhODRlZCIsImVtYWlsIjoiYWFzaGlzaGt1bWFyMTIzNzZAZ21haWwuY29tIn0.Hk-uG9XMIpGaEJfx7YipwxW9yj2yRxsLEorZiNkYoYE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}get/access-token/",
+							"host": [
+								"{{BASEURL}}get"
+							],
+							"path": [
+								"access-token",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Amz Address",
+			"item": [
+				{
+					"name": "Get user address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}user/address/",
+							"host": [
+								"{{BASE_URL}}user"
+							],
+							"path": [
+								"address",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user address",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc0OTg1NTY4LCJpYXQiOjE2NzQ5ODE5NjgsImp0aSI6ImY3ODZhZThkY2U4YjRmOWJiYTE3YTRhYzY0Mjg5NmY4IiwiZW1haWwiOiJhc2hAZ21haWwuY29tIn0.3xRAKZf-09w0mNgypmh7Wo7QXWg8xSnGc0QAa9g6s-8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"country\": \"India\",\n    \"full_name\": \"md, julain\",\n    \"mobile_number\": 992737373,\n    \"pincode\": 110053,\n    \"flat\": \"75\",\n    \"street\": \"Block B, 6th avenue, rabibganj\",\n    \"landmark\": \"rabibganj hospital\",\n    \"town\": \"chittongong\",\n    \"state\": \"DL\",\n    \"default\": false,\n    \"address_type\": \"Home\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}user/address/",
+							"host": [
+								"{{BASEURL}}user"
+							],
+							"path": [
+								"address",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user address",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MDc0MTcwLCJpYXQiOjE2NzUwNzA1NzAsImp0aSI6IjU4YTRkMzU4YzBlMDRiZWM4OGM4N2FlZjhiNTM3MmEzIiwiZW1haWwiOiJhc2hAZ21haWwuY29tIn0.o9BvjQhBBxr1wRlRbDQt5Ktxv9bfXFVdsmb2oQpupGc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\" :  37\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}user/address/",
+							"host": [
+								"{{BASEURL}}user"
+							],
+							"path": [
+								"address",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user address",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MDc0MTcwLCJpYXQiOjE2NzUwNzA1NzAsImp0aSI6IjU4YTRkMzU4YzBlMDRiZWM4OGM4N2FlZjhiNTM3MmEzIiwiZW1haWwiOiJhc2hAZ21haWwuY29tIn0.o9BvjQhBBxr1wRlRbDQt5Ktxv9bfXFVdsmb2oQpupGc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\" : 38,\n    \"country\": \"India\",\n    \"full_name\": \"Aashish Kumar\",\n    \"mobile_number\": 434337332,\n    \"pincode\": 110033,\n    \"flat\": \"86\",\n    \"street\": \"Block k house no 86 jahangir puri\",\n    \"landmark\": \"metro station\",\n    \"town\": \"Delhi\",\n    \"state\": \"DL\",\n    \"default\": false,\n    \"address_type\": \"Home\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}user/address/",
+							"host": [
+								"{{BASEURL}}user"
+							],
+							"path": [
+								"address",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Set address default",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MDU5OTU4LCJpYXQiOjE2NzUwNTYzNTgsImp0aSI6ImUzZWQyYTkzNDNmOTQ0ZWM4MjExNjYxNjNjZDk1ZTZkIiwiZW1haWwiOiJhc2hAZ21haWwuY29tIn0.9P4EC7YLlBDI-4Tq-Iq6-4mdu0d9OTUGof994pJ70XY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASEURL}}user/address/set/default/38/",
+							"host": [
+								"{{BASEURL}}user"
+							],
+							"path": [
+								"address",
+								"set",
+								"default",
+								"38",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get Brands",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASEURL}}brands/",
+							"host": [
+								"{{BASEURL}}brands"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new brand",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASEURL}}brands/",
+							"host": [
+								"{{BASEURL}}brands"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Subcategory1 products",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASEURL}}products/fashion/men/",
+							"host": [
+								"{{BASEURL}}products"
+							],
+							"path": [
+								"fashion",
+								"men",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Subcategory2 products",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASEURL}}products/fashion/Men/hoddies/",
+							"host": [
+								"{{BASEURL}}products"
+							],
+							"path": [
+								"fashion",
+								"Men",
+								"hoddies",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get single product details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASEURL}}product/product-id/1/product-detail/2/",
+							"host": [
+								"{{BASEURL}}product"
+							],
+							"path": [
+								"product-id",
+								"1",
+								"product-detail",
+								"2",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Get cart products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MzM4ODEyLCJpYXQiOjE2NzUzMzUyMTIsImp0aSI6IjRhZmQ0YzY2MjJkMjRhYzZiY2UyYzQ4NWRhZGJmNmJjIiwiZW1haWwiOiJhYXNoaXNoa3VtYXIxMjM3NkBnbWFpbC5jb20ifQ.ctKnbA1VsMetAyTlAj8VE42N_cNkXTYaegnSK-3jOiI",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASEURL}}cart/",
+							"host": [
+								"{{BASEURL}}cart"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add product to cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MzQzMjI4LCJpYXQiOjE2NzUzMzk2MjgsImp0aSI6ImJiZmI3Yzg1MTgyMzQyNjA4Yjc5NWY3YzJkZTZlYjQ0IiwiZW1haWwiOiJhYXNoaXNoa3VtYXIxMjM3NkBnbWFpbC5jb20ifQ.BczOp0fv6dsLFO6IvCnJuSDe7Motw04NdBxphTT1J8k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\" : 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}cart/",
+							"host": [
+								"{{BASEURL}}cart"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete product from cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MzQzMjI4LCJpYXQiOjE2NzUzMzk2MjgsImp0aSI6ImJiZmI3Yzg1MTgyMzQyNjA4Yjc5NWY3YzJkZTZlYjQ0IiwiZW1haWwiOiJhYXNoaXNoa3VtYXIxMjM3NkBnbWFpbC5jb20ifQ.BczOp0fv6dsLFO6IvCnJuSDe7Motw04NdBxphTT1J8k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\" : 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}cart/",
+							"host": [
+								"{{BASEURL}}cart"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update the product quantity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc1MzQ2OTMyLCJpYXQiOjE2NzUzNDMzMzIsImp0aSI6IjE4YWM5ZjZmZWMyNTQ0ZmE5MWE2YjI3ZWZhMDkwNGNhIiwiZW1haWwiOiJhYXNoaXNoa3VtYXIxMjM3NkBnbWFpbC5jb20ifQ.8saOs82UttJHL0aXWM6_cTnfqZJFh2BVH3ooU8zCCuM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\" : 6,\n    \"quantity\" : 50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASEURL}}cart/",
+							"host": [
+								"{{BASEURL}}cart"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "http://localhost:8000/api/amz/",
+			"value": "BASE_URL"
+		},
+		{
+			"key": "BASE_URL",
+			"value": "http://localhost:8000/api/amz/"
+		},
+		{
+			"key": "BASEURL",
+			"value": "http://localhost:8001/api/amz/"
+		}
+	]
+}
