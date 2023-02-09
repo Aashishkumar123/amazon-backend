@@ -62,5 +62,5 @@ $ black amazon_backend_api/api/views.py
 ```
 <b>using flake8 package</b>
 ```console
-$ flake amazon_backend_api/api/views.py
+$ flake8 amazon_backend_api/api/views.py
 ```
