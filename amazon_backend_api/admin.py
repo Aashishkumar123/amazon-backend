@@ -9,7 +9,7 @@ from amazon_backend_api.models import (
     Product,
     ProductDetail,
     Color,
-    Cart
+    Cart,
 )
 
 admin.site.register(Amazonuser)
