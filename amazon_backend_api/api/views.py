@@ -1,37 +1,38 @@
-from rest_framework.views import APIView
+from django.contrib.auth import authenticate
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from amazon_backend_api.api.helpers import (
+    get_access_token_from_refresh_token,
+    get_tokens_for_user,
+    get_user_from_token,
+)
 from amazon_backend_api.api.serializers import (
-    AmazonuserSerializer,
     AmazonuserAddressSerializer,
-    BrandSerializer,
-    ProductDetailsSerializer,
-    CartSerializer,
     AmazonuserLoginSerializer,
-    RegenerateAccessTokenSerializer
+    AmazonuserSerializer,
+    BrandSerializer,
+    CartSerializer,
+    ProductDetailsSerializer,
+    RegenerateAccessTokenSerializer,
 )
 from amazon_backend_api.models import (
     Amazonuser,
-    UserAddress,
     Brand,
+    Cart,
     Product,
     ProductDetail,
     Subcategory,
-    Cart
+    UserAddress,
 )
-from rest_framework import status
-from django.contrib.auth import authenticate
-from amazon_backend_api.api.helpers import (
-    get_tokens_for_user,
-    get_user_from_token,
-    get_access_token_from_refresh_token
-)
-from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterAPIView(APIView):
     """This api used for register new user"""
 
-    def post(self,request):
+    def post(self, request):
         """Handle post request"""
 
         serializer = AmazonuserSerializer(data=request.data)
@@ -43,31 +44,29 @@ class RegisterAPIView(APIView):
             amz_user = serializer.save()
 
             """return the user information and tokens"""
-            res_data = get_tokens_for_user(
-                Amazonuser.objects.get(email=amz_user.email)
-                )
+            res_data = get_tokens_for_user(Amazonuser.objects.get(email=amz_user.email))
 
             """response result"""
             response = {
-                'status' : status.HTTP_201_CREATED,
-                'message' : 'created',
-                'data' : res_data
+                "status": status.HTTP_201_CREATED,
+                "message": "created",
+                "data": res_data,
             }
             return Response(response, status=status.HTTP_201_CREATED)
 
         """if validation failed it return this"""
         response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'bad request',
-            'data' : serializer.errors
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": serializer.errors,
         }
-        return Response(response, status=status.HTTP_400_BAD_REQUEST) 
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SigninAPIView(APIView):
-    """""This api is handling login"""""
+    """""This api is handling login""" ""
 
-    def post(self,request):
+    def post(self, request):
         """Handle post request"""
 
         login_serializer = AmazonuserLoginSerializer(data=request.data)
@@ -76,49 +75,44 @@ class SigninAPIView(APIView):
         if login_serializer.is_valid():
 
             """get email and password"""
-            email = login_serializer.validated_data['email']
-            password = login_serializer.validated_data['password']
+            email = login_serializer.validated_data["email"]
+            password = login_serializer.validated_data["password"]
 
             """it will check the credentials is valid or not"""
-            user = authenticate(
-                    request,
-                    email = email,
-                    password = password)
+            user = authenticate(request, email=email, password=password)
 
             """it will return access token if credentials are ok"""
             if user is not None:
-                
+
                 """return the user information and tokens"""
-                res_data = get_tokens_for_user(
-                    Amazonuser.objects.get(email=email)
-                    )
+                res_data = get_tokens_for_user(Amazonuser.objects.get(email=email))
                 response = {
-                    'status' : status.HTTP_200_OK,
-                    'message' : 'success',
-                    'data' : res_data
+                    "status": status.HTTP_200_OK,
+                    "message": "success",
+                    "data": res_data,
                 }
-                return Response(response,status=status.HTTP_200_OK)
+                return Response(response, status=status.HTTP_200_OK)
             else:
                 """otherwise return this response"""
                 response = {
-                    'status' : status.HTTP_401_UNAUTHORIZED,
-                    'message' : 'Invalid Email or Password'
+                    "status": status.HTTP_401_UNAUTHORIZED,
+                    "message": "Invalid Email or Password",
                 }
-                return Response(response,status=status.HTTP_401_UNAUTHORIZED)
+                return Response(response, status=status.HTTP_401_UNAUTHORIZED)
 
         """if validation failed it return this"""
         response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'bad request',
-            'data' : login_serializer.errors
-            }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": login_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RegenerateAccessToken(APIView):
     """This api is used to regenerate access token"""
 
-    def post(self,request):
+    def post(self, request):
         """Handle post request"""
 
         reg_access_token_serializer = RegenerateAccessTokenSerializer(data=request.data)
@@ -129,19 +123,19 @@ class RegenerateAccessToken(APIView):
             """return access token"""
             data = get_access_token_from_refresh_token(request)
             response = {
-                'status' : status.HTTP_200_OK,
-                'message' : 'success',
-                'data' : data if data else []
-                }
-            return Response(response,status=status.HTTP_200_OK)
+                "status": status.HTTP_200_OK,
+                "message": "success",
+                "data": data if data else [],
+            }
+            return Response(response, status=status.HTTP_200_OK)
 
         """if validation failed it return this"""
         response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'bad request',
-            'data' : reg_access_token_serializer.errors
-            }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": reg_access_token_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserAddressAPIView(APIView):
@@ -149,143 +143,134 @@ class UserAddressAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def get(self,request):
+    def get(self, request):
         print(request.user)
         user = get_user_from_token(request)
         address = UserAddress.objects.filter(user=user)
-        serialize_address = AmazonuserAddressSerializer(address,many=True)
+        serialize_address = AmazonuserAddressSerializer(address, many=True)
         response = {
-            "status" : status.HTTP_200_OK,
-            "message" : 'OK',
-            "data" : serialize_address.data
+            "status": status.HTTP_200_OK,
+            "message": "OK",
+            "data": serialize_address.data,
         }
-        return Response(response,status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_200_OK)
 
-    def post(self,request):
+    def post(self, request):
         data = request.data
         user = get_user_from_token(request)
         serialize_address = AmazonuserAddressSerializer(data=data)
         if serialize_address.is_valid():
             created_adrs = serialize_address.save(user=user)
             response = {
-                'status' : status.HTTP_201_CREATED,
-                'message' : 'address created',
-                'data' : AmazonuserAddressSerializer(UserAddress.objects.get(id=created_adrs.id)).data
+                "status": status.HTTP_201_CREATED,
+                "message": "address created",
+                "data": AmazonuserAddressSerializer(
+                    UserAddress.objects.get(id=created_adrs.id)
+                ).data,
             }
-            return Response(response,status=status.HTTP_201_CREATED)
+            return Response(response, status=status.HTTP_201_CREATED)
         response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : serialize_address.errors
-            }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": serialize_address.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self,request):
+    def put(self, request):
         user = get_user_from_token(request)
-        if 'id' not in request.data:
+        if "id" not in request.data:
             response = {
-                'status' : '400',
-                'message' : 'bad request',
-                'data' : {
-                'id' : [
-                        "This field is required."
-                    ]
-                }
+                "status": "400",
+                "message": "bad request",
+                "data": {"id": ["This field is required."]},
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
         data = request.data
 
         try:
             user_address = UserAddress.objects.filter(user=user)
-            adrs_id = user_address.get(id=data['id'])
+            adrs_id = user_address.get(id=data["id"])
         except UserAddress.DoesNotExist:
             response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'Id does not exist.'
-        }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "Id does not exist.",
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        serialize_address = AmazonuserAddressSerializer(adrs_id,data=data)
+        serialize_address = AmazonuserAddressSerializer(adrs_id, data=data)
         if serialize_address.is_valid():
             updated_adrs = serialize_address.save()
             response = {
-                'status' : status.HTTP_200_OK,
-                'message' : 'address updated',
-                'data' : AmazonuserAddressSerializer(UserAddress.objects.get(id=updated_adrs.id)).data
+                "status": status.HTTP_200_OK,
+                "message": "address updated",
+                "data": AmazonuserAddressSerializer(
+                    UserAddress.objects.get(id=updated_adrs.id)
+                ).data,
             }
-            return Response(response,status=status.HTTP_200_OK)
+            return Response(response, status=status.HTTP_200_OK)
         response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : serialize_address.errors
-            }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self,request):
-        user = get_user_from_token(request)
-        if 'id' not in request.data or not request.data['id']:
-            response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'bad request',
-            'data' : {
-                'id' : [
-                        "This field is required."
-                    ]
-            }
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": serialize_address.errors,
         }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        address_id = request.data['id']
+    def delete(self, request):
+        user = get_user_from_token(request)
+        if "id" not in request.data or not request.data["id"]:
+            response = {
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"id": ["This field is required."]},
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+        address_id = request.data["id"]
 
         try:
             UserAddress.objects.filter(user=user).get(id=address_id).delete()
         except UserAddress.DoesNotExist:
             response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'Id does not exist.'
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "Id does not exist.",
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        response = {
-            'status' : status.HTTP_204_NO_CONTENT,
-            'message' : 'Address deleted.'
-        }
-        return Response(response,status=status.HTTP_204_NO_CONTENT)
+        response = {"status": status.HTTP_204_NO_CONTENT, "message": "Address deleted."}
+        return Response(response, status=status.HTTP_204_NO_CONTENT)
 
 
-'''
+"""
 This api will set a default address....
-'''
+"""
+
+
 class SetdefaultAddressAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def post(self,request,id):
+    def post(self, request, id):
         user = get_user_from_token(request)
-        df_adrs =  UserAddress.objects.filter(user=user)
+        df_adrs = UserAddress.objects.filter(user=user)
         df_adrs.filter(default=True).update(default=False)
-        
+
         try:
             update_default_adrs = df_adrs.get(id=id)
             update_default_adrs.default = True
             update_default_adrs.save()
         except UserAddress.DoesNotExist:
-            response = {
-            'status' : status.HTTP_404_NOT_FOUND,
-            'message' : 'ID not found'
-        }
-            return Response(response,status=status.HTTP_404_NOT_FOUND)
-        
-        response = {
-            'status' : status.HTTP_200_OK,
-            'message' : 'success'
-        }
-        return Response(response,status=status.HTTP_200_OK)
+            response = {"status": status.HTTP_404_NOT_FOUND, "message": "ID not found"}
+            return Response(response, status=status.HTTP_404_NOT_FOUND)
+
+        response = {"status": status.HTTP_200_OK, "message": "success"}
+        return Response(response, status=status.HTTP_200_OK)
 
 
-'''
+"""
 This api will GET and Save the new brands
-'''
+"""
+
+
 class BrandAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -294,286 +279,288 @@ class BrandAPIView(APIView):
         brands = Brand.objects.all()
         brand_serializer = BrandSerializer(brands, many=True)
         response = {
-            'status' : status.HTTP_200_OK,
-            'message' : 'success',
-            'data' : brand_serializer.data
+            "status": status.HTTP_200_OK,
+            "message": "success",
+            "data": brand_serializer.data,
         }
-        return Response(response,status=status.HTTP_200_OK)
+        return Response(response, status=status.HTTP_200_OK)
 
-    def post(self,request):
+    def post(self, request):
         data = request.data
         brand_serializer = BrandSerializer(data=data)
         if brand_serializer.is_valid():
             brand = brand_serializer.save()
             response = {
-            'status' : status.HTTP_201_CREATED,
-            'message' : 'brand created',
-            'data' : BrandSerializer(Brand.objects.get(id=brand.id)).data
+                "status": status.HTTP_201_CREATED,
+                "message": "brand created",
+                "data": BrandSerializer(Brand.objects.get(id=brand.id)).data,
             }
-            return Response(response,status=status.HTTP_201_CREATED)
+            return Response(response, status=status.HTTP_201_CREATED)
         response = {
-            'status' : status.HTTP_400_BAD_REQUEST,
-            'message' : 'bad request',
-            'data' : brand_serializer.errors
-            }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": brand_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-'''
+"""
 This api return all the products on the base of its subcategory
-'''
-class ProductsAPIView(APIView):
+"""
 
-    def get(self,request,subcategory1,subcategory2=None):
+
+class ProductsAPIView(APIView):
+    def get(self, request, subcategory1, subcategory2=None):
         if subcategory2:
-             products = Product.objects.filter(
-                    subcategory1=Subcategory.objects.filter(name__iexact=subcategory1).first(),
-                    subcategory2=Subcategory.objects.filter(name__iexact=subcategory2).first()
-                    ).first()
+            products = Product.objects.filter(
+                subcategory1=Subcategory.objects.filter(
+                    name__iexact=subcategory1
+                ).first(),
+                subcategory2=Subcategory.objects.filter(
+                    name__iexact=subcategory2
+                ).first(),
+            ).first()
         else:
             products = Product.objects.filter(
-                    subcategory1=Subcategory.objects.filter(name__iexact=subcategory1).first()
-                    ).first()
+                subcategory1=Subcategory.objects.filter(
+                    name__iexact=subcategory1
+                ).first()
+            ).first()
 
         allproducts = ProductDetail.objects.filter(product=products)
-        allproducts_serializer = ProductDetailsSerializer(allproducts,many=True)
+        allproducts_serializer = ProductDetailsSerializer(allproducts, many=True)
 
         response = {
-            'status' : status.HTTP_200_OK,
-            'message' : 'success',
-            'data' : allproducts_serializer.data
-            }
-        return Response(response,status=status.HTTP_200_OK)
+            "status": status.HTTP_200_OK,
+            "message": "success",
+            "data": allproducts_serializer.data,
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
 
-'''
+"""
 This api return single product details
-'''
-class ProductDetailsAPIView(APIView):
+"""
 
-    def get(self,request,product_id,product_detail_id):
+
+class ProductDetailsAPIView(APIView):
+    def get(self, request, product_id, product_detail_id):
         try:
             product = Product.objects.get(id=product_id)
         except Product.DoesNotExist:
             response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'product not found.'
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "product not found.",
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
         product_details = ProductDetail.objects.filter(product=product)
 
         if not product_details.filter(id=product_detail_id):
             response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'product not found.',
-                'data' : []
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "product not found.",
+                "data": [],
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        product_details_serializer = ProductDetailsSerializer(product_details,many=True)
+        product_details_serializer = ProductDetailsSerializer(
+            product_details, many=True
+        )
 
         response = {
-            'status' : status.HTTP_200_OK,
-            'message' : 'success',
-            'active_product_detail_id' : product_detail_id,
-            'data' : product_details_serializer.data
-            }
-        return Response(response,status=status.HTTP_200_OK)
+            "status": status.HTTP_200_OK,
+            "message": "success",
+            "active_product_detail_id": product_detail_id,
+            "data": product_details_serializer.data,
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
 
-'''
+"""
 cart api that will get all the products of an user
 cart api that will add product to the cart of an user
 cart api that will update the product quantity of an user
 cart api that will remove the product from cart of an user
-'''
+"""
+
+
 class CartAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    '''
+    """
     Return all the products from cart for particular user
-    '''
-    def get(self,request):
+    """
+
+    def get(self, request):
         user = get_user_from_token(request)
         cart = Cart.objects.filter(user=user)
-        cart_serializer = CartSerializer(cart,many=True)
+        cart_serializer = CartSerializer(cart, many=True)
         response = {
-            'status' : status.HTTP_200_OK,
-            'message' : 'success',
-            'data' : cart_serializer.data
+            "status": status.HTTP_200_OK,
+            "message": "success",
+            "data": cart_serializer.data,
         }
-        return Response(response,status=status.HTTP_200_OK)
-    
-    '''
+        return Response(response, status=status.HTTP_200_OK)
+
+    """
     Add the product to cart for a particular user
-    '''
-    def post(self,request):
+    """
+
+    def post(self, request):
         user = get_user_from_token(request)
         data = request.data
-        
-        '''
-        This will response 404 if product_id not in request data
-        '''
-        if 'product_id' not in data:
-            response = {
-                    'status' : status.HTTP_400_BAD_REQUEST,
-                    'message' : 'bad request',
-                    'data' : {
-                        'product_id' : 'Product id should not empty'
-                    }
-                }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
-        '''
+        """
+        This will response 404 if product_id not in request data
+        """
+        if "product_id" not in data:
+            response = {
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"product_id": "Product id should not empty"},
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+        """
         This will response 404 status code if get wrong product id
-        '''
+        """
         try:
-            product_id = ProductDetail.objects.get(id=request.data['product_id'])
+            product_id = ProductDetail.objects.get(id=request.data["product_id"])
         except ProductDetail.DoesNotExist:
             response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : {
-                    'product_id' : 'Invalid product id'
-                }
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"product_id": "Invalid product id"},
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
-        
-        '''
-        This will check product already in cart then will response 404 status code
-        '''
-        if Cart.objects.filter(user=user,product=data['product_id']).exists():
-                response = {
-                    'status' : status.HTTP_400_BAD_REQUEST,
-                    'message' : 'bad request',
-                    'data' : {
-                        'product' : 'Product already in cart'
-                    }
-                }
-                return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        '''
+        """
+        This will check product already in cart then will response 404 status code
+        """
+        if Cart.objects.filter(user=user, product=data["product_id"]).exists():
+            response = {
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"product": "Product already in cart"},
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+        """
         If everything fine this will add product to cart
-        '''
+        """
         cart_serializer = CartSerializer(data=data)
         if cart_serializer.is_valid():
-            cart_serializer.save(user=user,product=product_id)
+            cart_serializer.save(user=user, product=product_id)
             response = {
-                'status' : status.HTTP_201_CREATED,
-                'message' : 'proudct added to cart'
+                "status": status.HTTP_201_CREATED,
+                "message": "proudct added to cart",
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        '''
+        """
         else return 404 status code
-        '''
+        """
         response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : cart_serializer.errors
-            }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": cart_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-    '''
+    """
     This will update the product quantity of a particular user
-    '''
-    def patch(self,request):
+    """
+
+    def patch(self, request):
         data = request.data
         user = get_user_from_token(request)
-        
-        '''
+
+        """
         This will check request data is having id or not
-        '''
-        if 'id' not in data:
+        """
+        if "id" not in data:
             response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : {
-                    'id' : [
-                        'id is required'
-                    ]
-                }
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"id": ["id is required"]},
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        '''
+        """
         This will check the cart id is belong the authenticated user
-        '''
-        if not Cart.objects.filter(user=user,id=data['id']).exists():
+        """
+        if not Cart.objects.filter(user=user, id=data["id"]).exists():
             response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : {
-                    'id' : [
-                        'invalid cart id'
-                    ]
-                }
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"id": ["invalid cart id"]},
             }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        '''
+        """
         This will check the validation and update the product quantity
-        '''
-        cart_serializer = CartSerializer(instance=Cart.objects.get(id=data['id']),data=data,partial=True)
+        """
+        cart_serializer = CartSerializer(
+            instance=Cart.objects.get(id=data["id"]), data=data, partial=True
+        )
         if cart_serializer.is_valid():
             cart_serializer.save()
             response = {
-                'status' : status.HTTP_202_ACCEPTED,
-                'message' : 'quantity updated',
-                'data' : CartSerializer(Cart.objects.get(id=cart_serializer.data['id'])).data
+                "status": status.HTTP_202_ACCEPTED,
+                "message": "quantity updated",
+                "data": CartSerializer(
+                    Cart.objects.get(id=cart_serializer.data["id"])
+                ).data,
             }
-            return Response(response,status=status.HTTP_202_ACCEPTED)
-        
-        '''
+            return Response(response, status=status.HTTP_202_ACCEPTED)
+
+        """
         otherwise it raise the validation
-        '''
+        """
         response = {
-                'status' : status.HTTP_400_BAD_REQUEST,
-                'message' : 'bad request',
-                'data' : cart_serializer.errors
-            }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
-    
-    '''
-    This will remove product from cart of a particular user 
-    '''
-    def delete(self,request):
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": cart_serializer.errors,
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+    """
+    This will remove product from cart of a particular user
+    """
+
+    def delete(self, request):
         data = request.data
         user = get_user_from_token(request)
-        '''
+        """
         This will response 404 if product_id not in request data
-        '''
-        if 'product_id' not in data:
+        """
+        if "product_id" not in data:
             response = {
-                    'status' : status.HTTP_400_BAD_REQUEST,
-                    'message' : 'bad request',
-                    'data' : {
-                        'product_id' : 'Product id should not empty'
-                    }
-                }
-            return Response(response,status=status.HTTP_400_BAD_REQUEST)
+                "status": status.HTTP_400_BAD_REQUEST,
+                "message": "bad request",
+                "data": {"product_id": "Product id should not empty"},
+            }
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
-        '''
+        """
         This will check product avaliable in cart to delete
-        '''
-        if Cart.objects.filter(user=user,product=data['product_id']).exists():
-            Cart.objects.get(product=data['product_id']).delete()
+        """
+        if Cart.objects.filter(user=user, product=data["product_id"]).exists():
+            Cart.objects.get(product=data["product_id"]).delete()
             response = {
-                    'status' : status.HTTP_204_NO_CONTENT,
-                    'message' : 'product remove from cart',
-                }
-            return Response(response,status=status.HTTP_204_NO_CONTENT)
-        
-        '''
+                "status": status.HTTP_204_NO_CONTENT,
+                "message": "product remove from cart",
+            }
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
+
+        """
         other response inavlid product id
-        '''
+        """
         response = {
-                    'status' : status.HTTP_400_BAD_REQUEST,
-                    'message' : 'bad request',
-                    'data' : {
-                        'product_id' : 'Invalid product id'
-                    }
-                }
-        return Response(response,status=status.HTTP_400_BAD_REQUEST)
+            "status": status.HTTP_400_BAD_REQUEST,
+            "message": "bad request",
+            "data": {"product_id": "Invalid product id"},
+        }
+        return Response(response, status=status.HTTP_400_BAD_REQUEST)
