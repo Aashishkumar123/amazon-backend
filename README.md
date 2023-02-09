@@ -47,8 +47,20 @@ $ http://localhost:8000/api/amz/swagger/
 $ http://localhost:8000/api/amz/redoc/
 ```
 ## Testing
-<em>If you want run the test cases you can simply run this command</em>
+<em>If you want to run the test cases you can simply run this command</em>
 ```console
 $ python manage.py test
 ```
 <em>Hence all api testing code are wriiten in test.py file.</em>
+
+## Code Format
+<em>If you want to format the code you can simply run those commands.</em>
+<br /> <br />
+<b>using black package</b>
+```console
+$ black amazon_backend_api/api/views.py
+```
+<b>using flake8 package</b>
+```console
+$ flake amazon_backend_api/api/views.py
+```
