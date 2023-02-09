@@ -27,12 +27,12 @@ DATABASES = {
 <em>and then hit the migrate command to successfully create database table..</em>
 
 ```console
-$ python3 manage.py migrate
+$ python manage.py migrate
 ```
 ## Run the project
 <em>To run the project is very simple just hit this command</em>
 ```console
-$ python3 manage.py runserver
+$ python manage.py runserver
 ```
 
 ## API Documentations
@@ -46,3 +46,9 @@ $ http://localhost:8000/api/amz/swagger/
 ```console
 $ http://localhost:8000/api/amz/redoc/
 ```
+## Testing
+<em>If you want run the test cases you can simply run this command</em>
+```console
+$ python manage.py test
+```
+<em>Hence all api testing code are wriiten in test.py file.</em>
