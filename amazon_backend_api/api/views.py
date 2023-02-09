@@ -134,7 +134,7 @@ class RegenerateAccessToken(APIView):
                 'data' : data if data else []
                 }
             return Response(response,status=status.HTTP_200_OK)
-            
+
         """if validation failed it return this"""
         response = {
             'status' : status.HTTP_400_BAD_REQUEST,
@@ -144,14 +144,13 @@ class RegenerateAccessToken(APIView):
         return Response(response,status=status.HTTP_400_BAD_REQUEST)
 
 
-'''
-This api is used to get , update , delete , create the user address.....
-'''
 class UserAddressAPIView(APIView):
+    """This api is used to get , update , delete , create the user address"""
 
     permission_classes = [IsAuthenticated]
 
     def get(self,request):
+        print(request.user)
         user = get_user_from_token(request)
         address = UserAddress.objects.filter(user=user)
         serialize_address = AmazonuserAddressSerializer(address,many=True)
