@@ -223,5 +223,29 @@ class TestLogin(APITestCase):
         self.assertEqual(
                 response.status_code,
                     status.HTTP_200_OK,
-                    msg = 'test_login_successfull_statuscode'
+                        msg = 'test_login_successfull_statuscode'
+                )
+        
+    def test_login_without_data(self):
+        '''
+        This will test login without data from client
+        '''
+
+        response = self.client.post(self.url)
+        self.assertEqual(
+                response.status_code,
+                    status.HTTP_400_BAD_REQUEST,
+                        msg = 'test_login_without_data_statuscode'
+                )
+
+        self.assertEqual(
+                response.data.get('data').get('email')[0],
+                    'This field is required.',
+                    msg = 'test_login_without_data_DATA_email'
+                )
+
+        self.assertEqual(
+                response.data.get('data').get('password')[0],
+                    'This field is required.',
+                    msg = 'test_login_without_data_DATA_password'
                 )
