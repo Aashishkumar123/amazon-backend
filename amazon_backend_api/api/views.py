@@ -304,12 +304,11 @@ class BrandAPIView(APIView):
         return Response(response, status=status.HTTP_400_BAD_REQUEST)
 
 
-"""
-This api return all the products on the base of its subcategory
-"""
-
-
 class ProductsAPIView(APIView):
+    """
+    This api return all the products on the base of its subcategory
+    """
+
     def get(self, request, subcategory1, subcategory2=None):
         if subcategory2:
             products = Product.objects.filter(
@@ -338,12 +337,11 @@ class ProductsAPIView(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
-"""
-This api return single product details
-"""
-
-
 class ProductDetailsAPIView(APIView):
+    """
+    This api return single product details
+    """
+
     def get(self, request, product_id, product_detail_id):
         try:
             product = Product.objects.get(id=product_id)
@@ -377,15 +375,13 @@ class ProductDetailsAPIView(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
-"""
-cart api that will get all the products of an user
-cart api that will add product to the cart of an user
-cart api that will update the product quantity of an user
-cart api that will remove the product from cart of an user
-"""
-
-
 class CartAPIView(APIView):
+    """
+    cart api that will get all the products of an user
+    cart api that will add product to the cart of an user
+    cart api that will update the product quantity of an user
+    cart api that will remove the product from cart of an user
+    """
 
     permission_classes = [IsAuthenticated]
 
