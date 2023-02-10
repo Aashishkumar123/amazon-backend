@@ -2,6 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from amazon_backend_api.models import Amazonuser
+from django.contrib.auth.hashers import make_password
 
 
 class TestRegistration(APITestCase):
@@ -191,3 +192,36 @@ class TestRegistration(APITestCase):
                     'user with this email address already exists.', 
                         msg = 'test_exists_email_registration_data'
                     )
+
+
+class TestLogin(APITestCase):
+    '''
+    This will handle login testcases
+    '''
+
+    def setUp(self):
+        self.url = reverse('amz-user-sign-in')
+    
+
+    def test_login(self):
+        '''
+        This will test successfull login
+        '''
+        data = {
+            "full_name" : "Aashish Kumar",
+            'email' : "aashishkumar12376@gmail.com",
+            'password' : "aakumar123"
+            }
+
+        Amazonuser.objects.create(
+            full_name = data.get('full_name'),
+            email = data.get('email'),
+            password = make_password(data.get('password'))
+            )
+        
+        response = self.client.post(self.url, data=data)
+        self.assertEqual(
+                response.status_code,
+                    status.HTTP_200_OK,
+                    msg = 'test_login_successfull_statuscode'
+                )
