@@ -259,7 +259,6 @@ class TestLogin(APITestCase):
 
         '''wrong credentials'''
         data = {
-            "full_name" : "Aashish Kumar",
             'email' : "aashishkumar12376@gmail.com",
             'password' : "aakumar123"
             }
@@ -275,3 +274,34 @@ class TestLogin(APITestCase):
                     'Invalid Email or Password',
                         msg='test_login_with_invalid_credentials_message'
                     )
+
+
+    def test_login_with_empty_data(self):
+        '''
+        This will test login with empty data from client
+        '''
+
+        '''empty data'''
+        data = {
+            'email' : "",
+            'password' : ""
+            }
+
+        response = self.client.post(self.url,data=data)
+        self.assertEqual(
+                response.status_code,
+                    status.HTTP_400_BAD_REQUEST,
+                        msg = 'test_login_with_empty_data_statuscode'
+                )
+
+        self.assertEqual(
+                response.data.get('data').get('email')[0],
+                    'This field may not be blank.',
+                        msg = 'test_login_with_empty_data_DATA_email'
+                )
+
+        self.assertEqual(
+                response.data.get('data').get('password')[0],
+                    'This field may not be blank.',
+                        msg = 'test_login_with_empty_data_DATA_password'
+                )
