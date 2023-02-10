@@ -67,3 +67,10 @@ $ flake8 amazon_backend_api/api/views.py
 
 ## Postman api collection
 <em>You can also export the <a href="https://github.com/Aashishkumar123/amazon-backend/blob/master/AMAZON%20API.postman_collection.json">postman api collection</a> and import in postman.</em>
+
+## Run server through Docker
+<em>If you want to run the server using docker-compose hit the following command.</em>
+
+```docker
+$ docker-compose up --build
+```
