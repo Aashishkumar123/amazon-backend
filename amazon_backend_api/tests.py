@@ -225,7 +225,8 @@ class TestLogin(APITestCase):
                     status.HTTP_200_OK,
                         msg = 'test_login_successfull_statuscode'
                 )
-        
+
+
     def test_login_without_data(self):
         '''
         This will test login without data from client
@@ -249,3 +250,28 @@ class TestLogin(APITestCase):
                     'This field is required.',
                     msg = 'test_login_without_data_DATA_password'
                 )
+    
+
+    def test_login_with_invalid_credentials(self):
+        '''
+        This will test login with invalid credentials
+        '''
+
+        '''wrong credentials'''
+        data = {
+            "full_name" : "Aashish Kumar",
+            'email' : "aashishkumar12376@gmail.com",
+            'password' : "aakumar123"
+            }
+        
+        response = self.client.post(self.url, data=data)
+        self.assertEqual(
+                response.status_code,
+                    status.HTTP_401_UNAUTHORIZED,
+                        msg='test_login_with_invalid_credentials_statuscode'
+                    )
+        self.assertEqual(
+                response.data.get('message'),
+                    'Invalid Email or Password',
+                        msg='test_login_with_invalid_credentials_message'
+                    )
