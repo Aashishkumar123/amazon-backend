@@ -35,4 +35,4 @@ def get_access_token_from_refresh_token(request):
         user = get_user_from_token(request)
         data = get_tokens_for_user(Amazonuser.objects.get(email=user))
         return data
-    return None
+    return []

@@ -125,7 +125,7 @@ class RegenerateAccessToken(APIView):
             response = {
                 "status": status.HTTP_200_OK,
                 "message": "success",
-                "data": data if data else [],
+                "data": data,
             }
             return Response(response, status=status.HTTP_200_OK)
 
